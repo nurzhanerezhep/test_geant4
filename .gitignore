@@ -1,1 +1,7 @@
+build/.cmake/api/v1/reply.prev/
+build/.cmake/api/v1/reply/index-2023-03-11T12-45-43-0593.json
+build/CMakeCache.txt
+build/CMakeFiles/
+build/Testing/
+build/cmake_install.cmake
 CMakeLists.txt.user
