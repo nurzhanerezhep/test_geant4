@@ -1,5 +1,4 @@
  1- GEOMETRY DEFINITION
-	
    The geometry is constructed in the B1DetectorConstruction class.
    The setup consists of a an envelope of box shape containing two
    volumes: a spherical cone and a trapezoid.
@@ -13,7 +12,6 @@
    for Application Developers, Appendix 10: Geant4 Materials Database.
 		
  2- PHYSICS LIST
- 
    The particle's type and the physic processes which will be available
    in this example are set in the QBBC physics list. This physics list 
    requires data files for electromagnetic and hadronic processes.
@@ -29,7 +27,6 @@
    allows to activate/inactivate the processes one by one.
    
  3- ACTION INITALIZATION
-
    A newly introduced class, B1ActionInitialization, instantiates and registers 
    to Geant4 kernel all user action classes.
 
