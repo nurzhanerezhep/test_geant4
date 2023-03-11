@@ -1,17 +1,3 @@
--------------------------------------------------------------------
-
-     =========================================================
-     Geant4 - an Object-Oriented Toolkit for Simulation in HEP
-     =========================================================
-
-                            Example B1
-                            -----------
-
- This example demonstrates a very simple application where an energy
- deposit is accounted in user actions and their associated objects
- and a dose in a selected volume is calculated. 
-
-	
  1- GEOMETRY DEFINITION
 	
    The geometry is constructed in the B1DetectorConstruction class.
