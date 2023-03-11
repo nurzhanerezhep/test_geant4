@@ -5,3 +5,5 @@ build/CMakeFiles/
 build/Testing/
 build/cmake_install.cmake
 CMakeLists.txt.user
+build/.ninja_deps
+build/.ninja_log

@@ -44,8 +44,10 @@
 
 B1RunAction::B1RunAction()
 : G4UserRunAction(),
-  fEdep(0.),
-  fEdep2(0.)
+  fEdep_1(0.),
+  fEdep2_1(0.),
+  fEdep_2(0.),
+  fEdep2_2(0.)
 { 
   // add new units for dose
   // 
@@ -60,9 +62,13 @@ B1RunAction::B1RunAction()
   new G4UnitDefinition("picogray" , "picoGy"  , "Dose", picogray); 
 
   // Register accumulable to the accumulable manager
-  G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
-  accumulableManager->RegisterAccumulable(fEdep);
-  accumulableManager->RegisterAccumulable(fEdep2); 
+  G4AccumulableManager* accumulableManager1 = G4AccumulableManager::Instance();
+  accumulableManager1->RegisterAccumulable(fEdep_1);
+  accumulableManager1->RegisterAccumulable(fEdep2_1);
+
+  G4AccumulableManager* accumulableManager2 = G4AccumulableManager::Instance();
+  accumulableManager2->RegisterAccumulable(fEdep_2);
+  accumulableManager2->RegisterAccumulable(fEdep2_2);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -78,8 +84,10 @@ void B1RunAction::BeginOfRunAction(const G4Run*)
   G4RunManager::GetRunManager()->SetRandomNumberStore(false);
 
   // reset accumulables to their initial values
-  G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
-  accumulableManager->Reset();
+  G4AccumulableManager* accumulableManager1 = G4AccumulableManager::Instance();
+  accumulableManager1->Reset();
+  G4AccumulableManager* accumulableManager2 = G4AccumulableManager::Instance();
+  accumulableManager2->Reset();
 
 }
 
@@ -91,23 +99,36 @@ void B1RunAction::EndOfRunAction(const G4Run* run)
   if (nofEvents == 0) return;
 
   // Merge accumulables 
-  G4AccumulableManager* accumulableManager = G4AccumulableManager::Instance();
-  accumulableManager->Merge();
+  G4AccumulableManager* accumulableManager1 = G4AccumulableManager::Instance();
+  accumulableManager1->Merge();
 
   // Compute dose = total energy deposit in a run and its variance
   //
-  G4double edep  = fEdep.GetValue();
-  G4double edep2 = fEdep2.GetValue();
+  G4double edep_1  = fEdep_1.GetValue();
+  G4double edep2_1 = fEdep2_1.GetValue();
   
-  G4double rms = edep2 - edep*edep/nofEvents;
-  if (rms > 0.) rms = std::sqrt(rms); else rms = 0.;  
+  G4double rms1 = edep2_1 - edep_1*edep_1/nofEvents;
+  if (rms1 > 0.) rms1 = std::sqrt(rms1); else rms1 = 0.;
 
-  const B1DetectorConstruction* detectorConstruction
+  const B1DetectorConstruction* detectorConstruction1
    = static_cast<const B1DetectorConstruction*>
      (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-  G4double mass = detectorConstruction->GetScoringVolume()->GetMass();
-  G4double dose = edep/mass;
-  G4double rmsDose = rms/mass;
+  G4double mass1 = detectorConstruction1->GetScoringVolume1()->GetMass();
+  G4double dose1 = edep_1/mass1;
+  G4double rmsDose1 = rms1/mass1;
+
+  G4double edep_2  = fEdep_2.GetValue();
+  G4double edep2_2 = fEdep2_2.GetValue();
+
+  G4double rms2 = edep2_2 - edep_2*edep_2/nofEvents;
+  if (rms2 > 0.) rms2 = std::sqrt(rms2); else rms2 = 0.;
+
+  const B1DetectorConstruction* detectorConstruction2
+   = static_cast<const B1DetectorConstruction*>
+     (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+  G4double mass2 = detectorConstruction2->GetScoringVolume2()->GetMass();
+  G4double dose2= edep_2/mass2;
+  G4double rmsDose2 = rms2/mass2;
 
   // Run conditions
   //  note: There is no primary generator action object for "master"
@@ -142,8 +163,11 @@ void B1RunAction::EndOfRunAction(const G4Run* run)
      << G4endl
      << " The run consists of " << nofEvents << " "<< runCondition
      << G4endl
-     << " Cumulated dose per run, in scoring volume : " 
-     << G4BestUnit(dose,"Dose") << " rms = " << G4BestUnit(rmsDose,"Dose")
+     << " Cumulated dose per run, in scoring volume 1: "
+     << G4BestUnit(dose1,"Dose") << " rms = " << G4BestUnit(rmsDose1,"Dose")
+     << G4endl
+     << " Cumulated dose per run, in scoring volume 2: "
+     << G4BestUnit(dose2,"Dose") << " rms = " << G4BestUnit(rmsDose2,"Dose")
      << G4endl
      << "------------------------------------------------------------"
      << G4endl
@@ -152,10 +176,12 @@ void B1RunAction::EndOfRunAction(const G4Run* run)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-void B1RunAction::AddEdep(G4double edep)
+void B1RunAction::AddEdep(G4double edep_1, G4double edep_2)
 {
-  fEdep  += edep;
-  fEdep2 += edep*edep;
+  fEdep_1  += edep_1;
+  fEdep2_1 += edep_1*edep_1;
+  fEdep_2  += edep_2;
+  fEdep2_2 += edep_2*edep_2;
 }
 
 

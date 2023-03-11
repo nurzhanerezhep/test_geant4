@@ -38,7 +38,7 @@
 B1EventAction::B1EventAction(B1RunAction* runAction)
 : G4UserEventAction(),
   fRunAction(runAction),
-  fEdep(0.)
+  fEdep1(0.), fEdep2(0.)
 {} 
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -50,15 +50,21 @@ B1EventAction::~B1EventAction()
 
 void B1EventAction::BeginOfEventAction(const G4Event*)
 {    
-  fEdep = 0.;
+  fEdep1 = 0.;
+  fEdep2 = 0.;
 }
 
+void B1EventAction::AddEdep(G4double edep, G4int iVol)
+{
+    if (iVol == 1) { fEdep1 += edep;}
+    else if (iVol == 2) { fEdep2 += edep;}
+}
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void B1EventAction::EndOfEventAction(const G4Event*)
 {   
   // accumulate statistics in run action
-  fRunAction->AddEdep(fEdep);
+  fRunAction->AddEdep(fEdep1, fEdep2);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

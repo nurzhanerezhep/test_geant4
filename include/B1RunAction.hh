@@ -52,11 +52,13 @@ class B1RunAction : public G4UserRunAction
     virtual void BeginOfRunAction(const G4Run*);
     virtual void   EndOfRunAction(const G4Run*);
 
-    void AddEdep (G4double edep); 
+    void AddEdep (G4double edep1, G4double edep2);
 
   private:
-    G4Accumulable<G4double> fEdep;
-    G4Accumulable<G4double> fEdep2;
+    G4Accumulable<G4double> fEdep_1;
+    G4Accumulable<G4double> fEdep2_1;
+    G4Accumulable<G4double> fEdep_2;
+    G4Accumulable<G4double> fEdep2_2;
 };
 
 #endif

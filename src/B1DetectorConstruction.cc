@@ -1,28 +1,4 @@
 //
-// ********************************************************************
-// * License and Disclaimer                                           *
-// *                                                                  *
-// * The  Geant4 software  is  copyright of the Copyright Holders  of *
-// * the Geant4 Collaboration.  It is provided  under  the terms  and *
-// * conditions of the Geant4 Software License,  included in the file *
-// * LICENSE and available at  http://cern.ch/geant4/license .  These *
-// * include a list of copyright holders.                             *
-// *                                                                  *
-// * Neither the authors of this software system, nor their employing *
-// * institutes,nor the agencies providing financial support for this *
-// * work  make  any representation or  warranty, express or implied, *
-// * regarding  this  software system or assume any liability for its *
-// * use.  Please see the license in the file  LICENSE  and URL above *
-// * for the full disclaimer and the limitation of liability.         *
-// *                                                                  *
-// * This  code  implementation is the result of  the  scientific and *
-// * technical work of the GEANT4 collaboration.                      *
-// * By using,  copying,  modifying or  distributing the software (or *
-// * any work based  on the software)  you  agree  to acknowledge its *
-// * use  in  resulting  scientific  publications,  and indicate your *
-// * acceptance of all terms of the Geant4 Software license.          *
-// ********************************************************************
-//
 //
 /// \file B1DetectorConstruction.cc
 /// \brief Implementation of the B1DetectorConstruction class
@@ -44,7 +20,7 @@
 
 B1DetectorConstruction::B1DetectorConstruction()
 : G4VUserDetectorConstruction(),
-  fScoringVolume(0)
+  fScoringVolume1(0), fScoringVolume2(0)
 { }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -119,12 +95,12 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
   // Shape 1
   //  
   G4Material* shape1_mat = nist->FindOrBuildMaterial("G4_A-150_TISSUE");
-  G4ThreeVector pos1 = G4ThreeVector(0, 2*cm, -7*cm);
+  G4ThreeVector pos1 = G4ThreeVector(0*cm, -4*cm, 5*cm);
         
   // Conical section shape       
   G4double shape1_rmina =  0.*cm, shape1_rmaxa = 2.*cm;
-  G4double shape1_rminb =  0.*cm, shape1_rmaxb = 4.*cm;
-  G4double shape1_hz = 3.*cm;
+  G4double shape1_rminb =  0.*cm, shape1_rmaxb = 3.*cm;
+  G4double shape1_hz = 2.*cm;
   G4double shape1_phimin = 0.*deg, shape1_phimax = 360.*deg;
   G4Cons* solidShape1 =    
     new G4Cons("Shape1", 
@@ -149,12 +125,12 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
   // Shape 2
   //
   G4Material* shape2_mat = nist->FindOrBuildMaterial("G4_BONE_COMPACT_ICRU");
-  G4ThreeVector pos2 = G4ThreeVector(0, -1*cm, 7*cm);
+  G4ThreeVector pos2 = G4ThreeVector(0*cm, 4*cm, 5*cm);
 
   // Trapezoid shape       
-  G4double shape2_dxa = 12*cm, shape2_dxb = 12*cm;
-  G4double shape2_dya = 10*cm, shape2_dyb = 16*cm;
-  G4double shape2_dz  = 6*cm;      
+  G4double shape2_dxa = 8*cm, shape2_dxb = 8*cm;
+  G4double shape2_dya = 6*cm, shape2_dyb = 7*cm;
+  G4double shape2_dz  = 4*cm;
   G4Trd* solidShape2 =    
     new G4Trd("Shape2",                      //its name
               0.5*shape2_dxa, 0.5*shape2_dxb, 
@@ -176,7 +152,8 @@ G4VPhysicalVolume* B1DetectorConstruction::Construct()
                 
   // Set Shape2 as scoring volume
   //
-  fScoringVolume = logicShape2;
+  fScoringVolume1 = logicShape1;
+  fScoringVolume2 = logicShape2;
 
   //
   //always return the physical World

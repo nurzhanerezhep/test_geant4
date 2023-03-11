@@ -41,7 +41,7 @@
 B1SteppingAction::B1SteppingAction(B1EventAction* eventAction)
 : G4UserSteppingAction(),
   fEventAction(eventAction),
-  fScoringVolume(0)
+  fScoringVolume1(0), fScoringVolume2(0)
 {}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -53,24 +53,30 @@ B1SteppingAction::~B1SteppingAction()
 
 void B1SteppingAction::UserSteppingAction(const G4Step* step)
 {
-  if (!fScoringVolume) { 
+  if (!fScoringVolume1) {
     const B1DetectorConstruction* detectorConstruction
       = static_cast<const B1DetectorConstruction*>
         (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
-    fScoringVolume = detectorConstruction->GetScoringVolume();   
+    fScoringVolume1 = detectorConstruction->GetScoringVolume1();
   }
-
+  if (!fScoringVolume2) {
+    const B1DetectorConstruction* detectorConstruction
+      = static_cast<const B1DetectorConstruction*>
+        (G4RunManager::GetRunManager()->GetUserDetectorConstruction());
+    fScoringVolume2 = detectorConstruction->GetScoringVolume2();
+  }
   // get volume of the current step
-  G4LogicalVolume* volume 
+  G4LogicalVolume* volume
     = step->GetPreStepPoint()->GetTouchableHandle()
       ->GetVolume()->GetLogicalVolume();
-      
+  G4int iVol = 0;
   // check if we are in scoring volume
-  if (volume != fScoringVolume) return;
-
+  if (volume == fScoringVolume1) iVol=1;
+  else if(volume == fScoringVolume2) iVol=2;
   // collect energy deposited in this step
   G4double edepStep = step->GetTotalEnergyDeposit();
-  fEventAction->AddEdep(edepStep);  
+  fEventAction->AddEdep(edepStep, iVol);
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
